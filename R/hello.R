@@ -1,8 +1,9 @@
+#' @importFrom jsonlite fromJSON
 #' @import dplyr
 #' @import tidyr
 #' @import networkD3
 #' @import stringr
-#' @import jsonlite
+
 
 # Read the JSON file
 json_file_path <- system.file("extdata", "all_codes.json", package = "EHRPOP")
