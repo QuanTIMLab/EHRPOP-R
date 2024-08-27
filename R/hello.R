@@ -18,6 +18,11 @@ data <- fromJSON(json_file_path)
 
 treatment_data <- data$Treatment
 
+#' @importFrom jsonlite fromJSON
+#' @importFrom dplyr mutate case_when select arrange group_by summarize ungroup
+#' @importFrom tidyr drop_na
+#' @importFrom stringr str_c
+#' @importFrom networkD3 sankeyNetwork
 SnakeyDiagram <- function(df) {
 
     # Function to map code to category
