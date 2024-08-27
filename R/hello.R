@@ -6,7 +6,7 @@ library(jsonlite)
 
 
 # Read the JSON file
-json_file_path <- "all_codes.json"  # Update this path
+json_file_path <- system.file("extdata", "all_codes.json", package = "EHRPOP")
 data <- fromJSON(json_file_path)
 
 

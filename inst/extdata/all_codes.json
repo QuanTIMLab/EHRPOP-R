@@ -1,0 +1,950 @@
+{
+  "Disease": {
+    "Dementia": {
+      "ATC": [
+        "N06DA02",
+        "N06DA0",
+        "N06DA04",
+        "N06DX01"
+      ],
+      "ICD10": [
+        "F00",
+        "F01",
+        "F02",
+        "F03",
+        "G30",
+        "G310",
+        "G311",
+        "F051"
+      ]
+    },
+    "COPD": {
+      "ICD10": [
+        "I278",
+        "I279",
+        "J40",
+        "J41",
+        "J42",
+        "J43",
+        "J44",
+        "J45",
+        "J46",
+        "J47",
+        "J60",
+        "J61",
+        "J62",
+        "J63",
+        "J64",
+        "J65",
+        "J66",
+        "J67",
+        "J684",
+        "J701",
+        "J703"
+      ],
+      "ATC": [
+        "R03"
+      ]
+    },
+    "Other Cancers": {
+      "ORL": [
+        "C00",
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C06",
+        "C07",
+        "C08",
+        "C09",
+        "C10",
+        "C11",
+        "C12",
+        "C13",
+        "C14"
+      ],
+      "Colon": [
+        "C17",
+        "C18",
+        "C19",
+        "C20"
+      ],
+      "Autres_digestifs": [
+        "C15",
+        "C16",
+        "C22",
+        "C21",
+        "C23",
+        "C24",
+        "C25",
+        "C26",
+        "C30",
+        "C31",
+        "C48"
+      ],
+      "Tumeurs_thoraciques": [
+        "C32",
+        "C33",
+        "C34",
+        "C37",
+        "C38",
+        "C39",
+        "C40",
+        "C41",
+        "C45",
+        "C46"
+      ],
+      "Tumeurs_neurologiques": [
+        "C47",
+        "C49",
+        "C69",
+        "C70",
+        "C71",
+        "C72"
+      ],
+      "Tumeurs_gynecologiques": [
+        "C51",
+        "C52",
+        "C54",
+        "C55",
+        "C56",
+        "C57",
+        "C58"
+      ],
+      "Tumeurs_urologiques": [
+        "C60",
+        "C63",
+        "C64",
+        "C65",
+        "C66",
+        "C67",
+        "C68"
+      ],
+      "Endocrinologique": [
+        "C73",
+        "C74",
+        "C75",
+        "C76"
+      ],
+      "Tumeurs_lymphoides": [
+        "C81",
+        "C82",
+        "C83",
+        "C84",
+        "C85",
+        "C88",
+        "C96"
+      ],
+      "Tumeurs_myeloides": [
+        "C90",
+        "C91",
+        "C92",
+        "C93",
+        "C94",
+        "C95"
+      ],
+      "Non_specified": [
+        "C80",
+        "D00",
+        "D01",
+        "D02",
+        "D07",
+        "D09",
+        "D37",
+        "D38",
+        "D39",
+        "D40",
+        "D41",
+        "D42",
+        "D43",
+        "D44",
+        "D46",
+        "D47",
+        "D48"
+      ]
+    },
+    "Hypertension": [
+      "C09AA04",
+      "C09AA05",
+      "C09BA04",
+      "C09AA02",
+      "C09BA05",
+      "C09BA02",
+      "C09AA03",
+      "C09BA03",
+      "C09AA10",
+      "C09AA15",
+      "C09AA09",
+      "C09BA01",
+      "C09AA06",
+      "C09BA09",
+      "C09AA01",
+      "C09BA07",
+      "C09AA07",
+      "C09BX02",
+      "C09BA06",
+      "C09BA15",
+      "C09AA",
+      "C09AA08",
+      "C09AA11",
+      "C09AA13",
+      "C09AA16",
+      "C10BX06",
+      "C10BX15",
+      "C09CA04",
+      "C09CA06",
+      "C09DA04",
+      "C09DA06",
+      "C09CA07",
+      "C09CA01",
+      "C09DA07",
+      "C09CA03",
+      "C09DA03",
+      "C09DA01",
+      "C09CA02",
+      "C09DX04",
+      "C09CA08",
+      "C09DA08",
+      "C09CA09",
+      "C09DA02",
+      "C08CA13",
+      "C08CA01",
+      "C08CA04",
+      "C08DA01",
+      "C08DB01",
+      "C08CA11",
+      "C07FB02",
+      "C08GA02",
+      "C08CA05",
+      "C08CA02",
+      "C08CA03",
+      "C10BX03",
+      "C07FB03",
+      "C08CA08",
+      "C08CA09",
+      "C08CA16"
+    ],
+    "Diabetes": {
+      "ICD10": [
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "G590",
+        "G632",
+        "G730",
+        "G990",
+        "H280",
+        "H360",
+        "I792",
+        "L97",
+        "M142",
+        "M146",
+        "N083"
+      ],
+      "ATC": [
+        "A10A",
+        "A10B"
+      ]
+    },
+    "Dyslipidemia": {
+      "Statins": [
+        "C10AA",
+        "C10BA",
+        "C10BX",
+        "C10"
+      ],
+      "Fibrates": [
+        "C10AB"
+      ],
+      "Other Lipid Lowering Agents": [
+        "C10AC",
+        "C10AD",
+        "C10AX"
+      ]
+    },
+    "Cerebrovascular Disease": {
+      "ICD10": [
+        "G45",
+        "G46",
+        "H340",
+        "I60",
+        "I61",
+        "I62",
+        "I63",
+        "I64",
+        "I65",
+        "I66",
+        "I67",
+        "I68",
+        "I69"
+      ]
+    },
+    "Heart Failure": {
+      "ICD10": [
+        "I50",
+        "I110",
+        "I130",
+        "I132",
+        "I139",
+        "K761",
+        "J81"
+      ]
+    },
+    "Myocardial_infarction": {
+      "ICD10": [
+        "I21",
+        "I22",
+        "I252",
+        "I255"
+      ]
+    },
+    "Chronic Ischaemic Heart Disease": {
+      "ICD10": [
+        "I20",
+        "I21",
+        "I22",
+        "I23",
+        "I24",
+        "I25"
+      ]
+    },
+    "Acute Stroke": {
+      "ICD10": [
+        "I60",
+        "I61",
+        "I62",
+        "I63",
+        "I64"
+      ]
+    },
+    "Renal Disease": {
+      "ICD10": [
+        "I120",
+        "I131",
+        "N032",
+        "N033",
+        "N034",
+        "N035",
+        "N036",
+        "N037",
+        "N052",
+        "N053",
+        "N054",
+        "N055",
+        "N056",
+        "N057",
+        "N18",
+        "N19",
+        "N250",
+        "Z490",
+        "Z491",
+        "Z492",
+        "Z940",
+        "Z992"
+      ],
+      "CCAM": [
+        "JAEA003",
+        "HNEA002",
+        "JVJB001",
+        "JVJF004",
+        "JVJF008",
+        "JVRP004",
+        "JVRP007",
+        "JVRP008",
+        "YYYY007"
+      ]
+    },
+    "Liver and Pancreas": {
+      "ICD10": [
+        "B18",
+        "I85",
+        "K70",
+        "K71",
+        "K72",
+        "K73",
+        "K74",
+        "K75",
+        "K76",
+        "K85",
+        "K86",
+        "Z944"
+      ]
+    },
+    "Undernutrition": {
+      "ICD10": [
+        "E12",
+        "E40",
+        "E41",
+        "E42",
+        "E43",
+        "E44",
+        "E46",
+        "R63",
+        "R630",
+        "R633",
+        "R634",
+        "R636",
+        "R64"
+      ]
+    },
+    "Epilepsy": {
+      "ICD10": [
+        "G40",
+        "G41"
+      ]
+    },
+    "Parkinson": {
+      "ICD10": [
+        "F023",
+        "G20"
+      ]
+    },
+    "Psychiatric Disease": {
+      "Schizophrenia and Delusional Diseases": [
+        "F20",
+        "F21",
+        "F22",
+        "F23",
+        "F24",
+        "F25",
+        "F28",
+        "F29"
+      ],
+      "Depression and Mood Diseases": [
+        "F30",
+        "F31",
+        "F32",
+        "F33",
+        "F34",
+        "F38",
+        "F39",
+        "F40",
+        "F41",
+        "F42",
+        "F43",
+        "F44",
+        "F45",
+        "F48"
+      ],
+      "Mental Deficiency": [
+        "F70",
+        "F71",
+        "F72",
+        "F73",
+        "F78",
+        "F79"
+      ],
+      "Substance Abuse Disorders": [
+        "F10",
+        "F11",
+        "F12",
+        "F13",
+        "F14",
+        "F15",
+        "F16",
+        "F17",
+        "F18",
+        "F19"
+      ],
+      "Disorders of Psychological Development": [
+        "F80",
+        "F81",
+        "F82",
+        "F83",
+        "F84",
+        "F88",
+        "F89",
+        "F90",
+        "F91",
+        "F92",
+        "F93",
+        "F94",
+        "F95",
+        "F98"
+      ]
+    },
+    "Peripheral Vascular Disease": {
+      "ICD10": [
+        "I70",
+        "T700",
+        "I701",
+        "I702",
+        "I703",
+        "I704",
+        "I705",
+        "I706",
+        "I707",
+        "I708",
+        "I709",
+        "I71",
+        "I710",
+        "I711",
+        "I712",
+        "I713",
+        "I714",
+        "I715",
+        "I716",
+        "I717",
+        "I718",
+        "I719",
+        "I731",
+        "I738",
+        "I739",
+        "I771",
+        "I790",
+        "I792",
+        "K551",
+        "K558",
+        "K559",
+        "Z958",
+        "Z959"
+      ]
+    },
+    "Tobacco": {
+      "ICD10": [
+        "F17",
+        "T652",
+        "Z508",
+        "Z587",
+        "Z716",
+        "Z720",
+        "J41",
+        "J42",
+        "J43",
+        "J44"
+      ],
+      "ATC": [
+        "N07BA",
+        "N06AX12"
+      ]
+    },
+    "Alcohol": {
+      "ICD10": [
+        "E244",
+        "E52",
+        "F10",
+        "G312",
+        "G621",
+        "G721",
+        "I426",
+        "K292",
+        "K70",
+        "K852",
+        "K860",
+        "R780",
+        "T506",
+        "T510",
+        "T519",
+        "X45",
+        "X65",
+        "Y15",
+        "Y573",
+        "Y90",
+        "Y91",
+        "Z502",
+        "Z714",
+        "Z721"
+      ],
+      "ATC": [
+        "N07BB"
+      ]
+    }
+  },
+  "Treatment": {
+    "Surgery": {
+      "CCAM": [
+        "QEFA003",
+        "QEF005",
+        "QEFA010",
+        "QEFA020",
+        "QEFA007",
+        "QEFA012",
+        "QEFA013",
+        "QEFA015",
+        "QEFA019",
+        "QEFA001",
+        "QEFA008",
+        "QEFA004",
+        "QEFA016",
+        "QEFA017",
+        "QEFA018",
+        "FCFA021",
+        "FCFA029"
+      ],
+      "ICD10": [],
+      "ATC": [],
+      "partial_Mastectomy": {
+        "CCAM": [
+          "QEFA001",
+          "QEFA008",
+          "QEFA004",
+          "QEFA016",
+          "QEFA017",
+          "QEFA018"
+        ]
+      },
+      "mastectomy": {
+        "CCAM": [
+          "QEFA003",
+          "QEF005",
+          "QEFA010",
+          "QEFA020",
+          "QEFA007",
+          "QEFA012",
+          "QEFA013",
+          "QEFA015",
+          "QEFA019"
+        ]
+      },
+      "axillary_Surgery": {
+        "CCAM": [
+          "QEFA003",
+          "QEF005",
+          "QEFA010",
+          "QEFA020",
+          "QEFA001",
+          "QEFA008",
+          "FCFA021",
+          "FCFA029"
+        ]
+      }
+    },
+    "RT": {
+      "ICD10": [
+        "Z5100",
+        "Z5101",
+        "Z510"
+      ],
+      "CCAM": [
+        "ZZNA002",
+        "ZZNL001",
+        "ZZNL002",
+        "ZZNL003",
+        "ZZNL004",
+        "ZZNL005",
+        "ZZNL006",
+        "ZZNL009",
+        "ZZNL011",
+        "ZZNL012",
+        "ZZNL013",
+        "ZZNL014",
+        "ZZNL015",
+        "ZZNL016",
+        "ZZNL017",
+        "ZZNL018",
+        "ZZNL019",
+        "ZZNL02",
+        "ZZNL030",
+        "ZZNL031",
+        "ZZNL036",
+        "ZZNL037",
+        "ZZNL039",
+        "ZZNL040",
+        "ZZNL042",
+        "ZZNL043",
+        "ZZNL045",
+        "ZZNL046",
+        "ZZNL048",
+        "ZZNL049",
+        "ZZNL050",
+        "ZZNL051",
+        "ZZNL052",
+        "ZZNL053",
+        "ZZNL054",
+        "ZZNL055",
+        "ZZNL058",
+        "ZZNL059",
+        "ZZNL060",
+        "ZZNL061",
+        "ZZNL062",
+        "ZZNL063",
+        "ZZNL064",
+        "ZZNL065",
+        "ZZNL900",
+        "ZZNL902",
+        "ZZNL903",
+        "ZZNL904",
+        "ZZNL905",
+        "ZZNL906",
+        "YYYY016",
+        "YYYY021",
+        "YYYY023",
+        "YYYY045",
+        "YYYY046",
+        "YYYY047",
+        "YYYY048",
+        "YYYY049",
+        "YYYY050",
+        "YYYY051",
+        "YYYY052",
+        "YYYY053",
+        "YYYY054",
+        "YYYY055",
+        "YYYY056",
+        "YYYY080",
+        "YYYY081",
+        "YYYY099",
+        "YYYY101",
+        "YYYY109",
+        "YYYY122",
+        "YYYY128",
+        "YYYY136",
+        "YYYY141",
+        "YYYY151",
+        "YYYY152",
+        "YYYY166",
+        "YYYY175",
+        "YYYY197",
+        "YYYY1211",
+        "YYYY223",
+        "YYYY225",
+        "YYYY244",
+        "YYYY256",
+        "YYYY267",
+        "YYYY299",
+        "YYYY301",
+        "YYYY302",
+        "YYYY303",
+        "YYYY304",
+        "YYYY305",
+        "YYYY306",
+        "YYYY307",
+        "YYYY310",
+        "YYYY312",
+        "YYYY313",
+        "YYYY314",
+        "YYYY315",
+        "YYYY316",
+        "YYYY320",
+        "YYYY323",
+        "YYYY324",
+        "YYYY325",
+        "YYYY326",
+        "YYYY327",
+        "YYYY331",
+        "YYYY334",
+        "YYYY335",
+        "YYYY336",
+        "YYYY337",
+        "YYYY338",
+        "YYYY343",
+        "YYYY345",
+        "YYYY346",
+        "YYYY347",
+        "YYYY348",
+        "YYYY349",
+        "YYYY356",
+        "YYYY357",
+        "YYYY358",
+        "YYYY359",
+        "YYYY360",
+        "YYYY365",
+        "YYYY367",
+        "YYYY368",
+        "YYYY369",
+        "YYYY370",
+        "YYYY371",
+        "YYYY377",
+        "YYYY379",
+        "YYYY380",
+        "YYYY381",
+        "YYYY382",
+        "YYYY383",
+        "YYYY387",
+        "YYYY390",
+        "YYYY391",
+        "YYYY392",
+        "YYYY393",
+        "YYYY398",
+        "YYYY450",
+        "YYYY451",
+        "YYYY457",
+        "YYYY458",
+        "YYYY459",
+        "YYYY460",
+        "YYYY468",
+        "YYYY469",
+        "YYYY470",
+        "YYYY471",
+        "YYYY479",
+        "YYYY480",
+        "YYYY481",
+        "YYYY491",
+        "YYYY492",
+        "YYYY493",
+        "YYYY497",
+        "YYYY500",
+        "YYYY511",
+        "YYYY520",
+        "YYYY522",
+        "YYYY533",
+        "YYYY544",
+        "YYYY555",
+        "YYYY566",
+        "YYYY577",
+        "YYYY588",
+        "YYYY599"
+      ],
+      "ATC": []
+    },
+    "CT": {
+      "ICD10": [
+        "Z511",
+        "Z512"
+      ],
+      "CCAM": [
+        "ZZLF900",
+        "EBLA001",
+        "ABLB006",
+        "AFLB003",
+        "AFLB013",
+        "ECLF005",
+        "ECLF006",
+        "EELF004",
+        "EELF005",
+        "EDLF014",
+        "EDLF015",
+        "EDLF016",
+        "EDLF017",
+        "EDLF018",
+        "EDLF019",
+        "EDLF020",
+        "EDLF021",
+        "EBLF002",
+        "EBLF003",
+        "GGLB001",
+        "GGLB008",
+        "HPLB002",
+        "HPLB003",
+        "HPLB007",
+        "ZZLF004",
+        "ZZLF900"
+      ],
+      "ATC": [
+        "L01AA01",
+        "L01CD02",
+        "L01DB03",
+        "L01BC02",
+        "L01CD01"
+      ]
+    },
+    "TT": {
+      "ATC": [
+        "L01XC13",
+        "L01XC14",
+        "L01XC03"
+      ],
+      "ICD10": [],
+      "CCAM": [],
+      "Trastuzumab": {
+        "ATC": [
+          "L01XC03",
+          "L01XC14"
+        ]
+      },
+      "Pertuzumab": {
+        "ATC": [
+          "L01XC13"
+        ]
+      }
+    },
+    "ET": {
+      "ATC": [
+        "L02BA01",
+        "L02BG03",
+        "L02BG06",
+        "L02BG04",
+        "L02AE03",
+        "L02AE02",
+        "L02AE04"
+      ],
+      "ICD10": [],
+      "CCAM": [],
+      "GnRH_agonist": [
+        "L02AE03",
+        "L02AE02",
+        "L02AE04"
+      ],
+      "AI_ATC": [
+        "L02BG03",
+        "L02BG06",
+        "L02BG04"
+      ],
+      "Tamoxifen": [
+        "L02BA01"
+      ]
+    },
+    "CRYOP": {
+      "CCAM": [
+        "JJFC011",
+        "JJFJ001"
+      ],
+      "ATC": [
+        "G03GA01",
+        "G03GA08"
+      ]
+    },
+    "Metastatic": [
+      "C770",
+      "C771",
+      "C772",
+      "C774",
+      "C775",
+      "C778",
+      "C779",
+      "C78",
+      "C780",
+      "C781",
+      "C782",
+      "C783",
+      "C784",
+      "C785",
+      "C786",
+      "C787",
+      "C788",
+      "C79",
+      "C790",
+      "C791",
+      "C792",
+      "C793",
+      "C794",
+      "C795",
+      "C796",
+      "C797",
+      "C798",
+      "C799"
+    ],
+    "Molecule_metastatic": [
+      "L01BC06",
+      "L01XA02",
+      "L01XA01",
+      "L01DB01",
+      "L01XX41",
+      "L01CB01",
+      "L01BC05",
+      "L01AA03",
+      "L01BA01",
+      "L01XX09",
+      "L01DC03",
+      "L01DB07",
+      "L01DB08",
+      "L01AC01",
+      "L01CA01",
+      "L01CA02",
+      "L01CA03",
+      "L01CA04",
+      "L01XE07",
+      "L01XC07",
+      "L01XE",
+      "L01XE10",
+      "L01XE33",
+      "L02BA02",
+      "L02BG02",
+      "V03AF02",
+      "V10BX02"
+    ]
+  }
+}
