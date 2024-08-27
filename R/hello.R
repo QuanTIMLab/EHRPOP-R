@@ -23,6 +23,7 @@ treatment_data <- data$Treatment
 #' @importFrom tidyr drop_na
 #' @importFrom stringr str_c
 #' @importFrom networkD3 sankeyNetwork
+#' @importFrom magrittr %>%
 SnakeyDiagram <- function(df) {
 
     # Function to map code to category
