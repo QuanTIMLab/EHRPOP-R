@@ -223,10 +223,6 @@ sankey
 addCodeSurgery <- function(code, code_type) {
   # Read the JSON data from the file
   data <- fromJSON(json_file_path, simplifyVector = FALSE)
-
-  print(data)
-  print(treatment_data)
-
   
   # Check if the code_type is valid
   if (!code_type %in% names(data$Treatment$Surgery)) {
@@ -241,11 +237,14 @@ addCodeSurgery <- function(code, code_type) {
     
     # Save the updated data back to the file
     write_json(data, path = json_file_path, pretty = TRUE, auto_unbox = TRUE)
-    treatment_data = data
+    
+    # Update the global treatment_data variable
+    assign("treatment_data", data$Treatment, envir = .GlobalEnv)
   } else {
     message(sprintf("Code '%s' already exists in Surgery '%s'.", code, code_type))
   }
 }
+
 
 
 deleteCodeSurgery <- function(code) {
