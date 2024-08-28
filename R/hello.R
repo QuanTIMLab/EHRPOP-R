@@ -253,6 +253,7 @@ sankey
 
 # Function to add a code to the Surgery section of the JSON data
 addCodeSurgery <- function(code, code_type) {
+  print(json_file_path)
   # Read the JSON data from the writable file
   data <- fromJSON(json_file_path, simplifyVector = FALSE)
   
