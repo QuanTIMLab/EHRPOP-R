@@ -12,7 +12,27 @@ library(jsonlite)
 
 
 # Read the JSON file
-json_file_path <- system.file("extdata", "all_codes.json", package = "EHRPOP")
+initialize_treatment_data <- function() {
+  # Define the package path
+  pkg_json_file_path <- system.file("extdata", "all_codes.json", package = "EHRPOP")
+  
+  # Define the user-specific path (writable)
+  user_json_file_path <- file.path(tempdir(), "all_codes.json")
+  
+  # Copy the file if it doesn't already exist
+  if (!file.exists(user_json_file_path)) {
+    file.copy(pkg_json_file_path, user_json_file_path)
+  }
+  
+  # Load the data from the user-specific file
+  treatment_data <<- fromJSON(user_json_file_path)$Treatment
+  
+  # Return the path for later use
+  return(user_json_file_path)
+}
+
+# Initialize the data when the package is loaded or function is called
+json_file_path <- initialize_treatment_data()
 data <- fromJSON(json_file_path)
 
 
@@ -221,7 +241,7 @@ sankey
 
 # Function to add a code to the Surgery section of the JSON data
 addCodeSurgery <- function(code, code_type) {
-  # Read the JSON data from the file
+  # Read the JSON data from the writable file
   data <- fromJSON(json_file_path, simplifyVector = FALSE)
   
   # Check if the code_type is valid
@@ -239,16 +259,14 @@ addCodeSurgery <- function(code, code_type) {
     write_json(data, path = json_file_path, pretty = TRUE, auto_unbox = TRUE)
     
     # Update the global treatment_data variable
-    assign("treatment_data", data$Treatment, envir = .GlobalEnv)
+    treatment_data <<- data$Treatment
   } else {
     message(sprintf("Code '%s' already exists in Surgery '%s'.", code, code_type))
   }
 }
 
-
-
 deleteCodeSurgery <- function(code) {
-  # Read the JSON data from the file
+  # Read the JSON data from the writable file
   data <- fromJSON(json_file_path, simplifyVector = FALSE)
   
   found <- FALSE
@@ -264,6 +282,9 @@ deleteCodeSurgery <- function(code) {
       
       # Save the updated data back to the file
       write_json(data, path = json_file_path, pretty = TRUE, auto_unbox = TRUE)
+      
+      # Update the global treatment_data variable
+      treatment_data <<- data$Treatment
     }
   }
   
@@ -271,7 +292,5 @@ deleteCodeSurgery <- function(code) {
     message(sprintf("Code '%s' not found in Surgery section.", code))
   }
 }
-
-
 
 
