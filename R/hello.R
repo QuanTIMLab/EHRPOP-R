@@ -14,24 +14,8 @@ library(jsonlite)
 # Define the path to the package's JSON file
 pkg_json_file_path <- system.file("extdata", "all_codes.json", package = "EHRPOP")
 
-# Define the path to the new JSON file in your project directory
-project_json_file_path <- file.path(getwd(), "all_codes.json")  # or specify any other path
+treatment_data <- fromJSON(pkg_json_file_path)$Treatment
 
-# Check if the file already exists in the project directory
-if (!file.exists(project_json_file_path)) {
-  # If the file doesn't exist, read the data from the package's JSON file
-  data <- fromJSON(pkg_json_file_path)
-  
-  # Write the data to the new JSON file in the project directory
-  write_json(data, path = project_json_file_path, pretty = TRUE, auto_unbox = TRUE)
-  
-  print("File created successfully.")
-} else {
-  print("File already exists. No action taken.")
-}
-
-
-treatment_data <- data$Treatment
 
 #' @importFrom jsonlite fromJSON
 #' @importFrom dplyr mutate case_when select arrange group_by summarize ungroup
