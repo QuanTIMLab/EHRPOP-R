@@ -224,7 +224,7 @@ addCodeSurgery <- function(code, code_type) {
   # Read the JSON data from the file
   data <- fromJSON(json_file_path, simplifyVector = FALSE)
 
-  message(sprintf(data))
+  print(data)
 
   
   # Check if the code_type is valid
