@@ -237,7 +237,7 @@ sankey
 # Function to add a code to the Surgery section of the JSON data
 addCodeSurgery <- function(code, code_type) {
   # Read the JSON data from the file
-  data <- fromJSON(project_json_file_path, simplifyVector = FALSE)
+  data <- fromJSON(pkg_json_file_path, simplifyVector = FALSE)
 
   print(data)
   print(treatment_data)
@@ -255,7 +255,7 @@ addCodeSurgery <- function(code, code_type) {
     message(sprintf("Code '%s' added to Surgery '%s'.", code, code_type))
     
     # Save the updated data back to the file
-    write_json(data, path = project_json_file_path, pretty = TRUE, auto_unbox = TRUE)
+    write_json(data, path = pkg_json_file_path, pretty = TRUE, auto_unbox = TRUE)
     treatment_data = data
   } else {
     message(sprintf("Code '%s' already exists in Surgery '%s'.", code, code_type))
@@ -265,7 +265,7 @@ addCodeSurgery <- function(code, code_type) {
 
 deleteCodeSurgery <- function(code) {
   # Read the JSON data from the file
-  data <- fromJSON(project_json_file_path, simplifyVector = FALSE)
+  data <- fromJSON(pkg_json_file_path, simplifyVector = FALSE)
   
   found <- FALSE
   
@@ -279,7 +279,7 @@ deleteCodeSurgery <- function(code) {
       message(sprintf("Code '%s' removed from Surgery '%s'.", code, code_type))
       
       # Save the updated data back to the file
-      write_json(data, path = project_json_file_path, pretty = TRUE, auto_unbox = TRUE)
+      write_json(data, path = pkg_json_file_path, pretty = TRUE, auto_unbox = TRUE)
     }
   }
   
