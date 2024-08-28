@@ -223,6 +223,9 @@ sankey
 addCodeSurgery <- function(code, code_type) {
   # Read the JSON data from the file
   data <- fromJSON(json_file_path, simplifyVector = FALSE)
+
+  message(sprintf(data))
+
   
   # Check if the code_type is valid
   if (!code_type %in% names(data$Treatment$Surgery)) {
