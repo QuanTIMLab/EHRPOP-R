@@ -3,13 +3,11 @@
 #' @import networkD3
 #' @import stringr
 #' @import jsonlite
-
 library(dplyr)
 library(tidyr)
 library(networkD3)
 library(stringr)
 library(jsonlite)
-
 
 # Define the path to the package's JSON file
 pkg_json_file_path <- system.file("extdata", "all_codes.json", package = "EHRPOP")
@@ -24,6 +22,8 @@ treatment_data <- fromJSON(pkg_json_file_path)$Treatment
 #' @importFrom networkD3 sankeyNetwork
 #' @importFrom magrittr %>%
 SnakeyDiagram <- function(df) {
+
+    treatment_data <- fromJSON(pkg_json_file_path)$Treatment
 
     # Function to map code to category
     map_code <- function(code,treatment_data) {
