@@ -241,6 +241,7 @@ addCodeSurgery <- function(code, code_type) {
     
     # Save the updated data back to the file
     write_json(data, path = json_file_path, pretty = TRUE, auto_unbox = TRUE)
+    treatment_data = data
   } else {
     message(sprintf("Code '%s' already exists in Surgery '%s'.", code, code_type))
   }
