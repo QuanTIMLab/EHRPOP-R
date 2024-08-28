@@ -218,3 +218,56 @@ sankey
     
 
 }
+
+# Function to add a code to the Surgery section of the JSON data
+addCodeSurgery <- function(code, code_type) {
+  # Read the JSON data from the file
+  data <- fromJSON(json_file_path, simplifyVector = FALSE)
+  
+  # Check if the code_type is valid
+  if (!code_type %in% names(data$Treatment$Surgery)) {
+    message(sprintf("Error: Invalid code type '%s'", code_type))
+    return(NULL)
+  }
+  
+  # Add the code if it does not already exist
+  if (!(code %in% data$Treatment$Surgery[[code_type]])) {
+    data$Treatment$Surgery[[code_type]] <- c(data$Treatment$Surgery[[code_type]], code)
+    message(sprintf("Code '%s' added to Surgery '%s'.", code, code_type))
+    
+    # Save the updated data back to the file
+    write_json(data, path = json_file_path, pretty = TRUE, auto_unbox = TRUE)
+  } else {
+    message(sprintf("Code '%s' already exists in Surgery '%s'.", code, code_type))
+  }
+}
+
+
+deleteCodeSurgery <- function(code) {
+  # Read the JSON data from the file
+  data <- fromJSON(json_file_path, simplifyVector = FALSE)
+  
+  found <- FALSE
+  
+  # Iterate over each code type in the Surgery section
+  for (code_type in names(data$Treatment$Surgery)) {
+    # Check if the code is in the list for the current code type
+    if (code %in% data$Treatment$Surgery[[code_type]]) {
+      # Remove the code from the list
+      data$Treatment$Surgery[[code_type]] <- setdiff(data$Treatment$Surgery[[code_type]], code)
+      found <- TRUE
+      message(sprintf("Code '%s' removed from Surgery '%s'.", code, code_type))
+      
+      # Save the updated data back to the file
+      write_json(data, path = json_file_path, pretty = TRUE, auto_unbox = TRUE)
+    }
+  }
+  
+  if (!found) {
+    message(sprintf("Code '%s' not found in Surgery section.", code))
+  }
+}
+
+
+
+
