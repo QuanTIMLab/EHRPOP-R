@@ -11,7 +11,6 @@ library(stringr)
 library(jsonlite)
 
 
-# Read the JSON file
 initialize_treatment_data <- function() {
   # Define the package path
   pkg_json_file_path <- system.file("extdata", "all_codes.json", package = "EHRPOP")
@@ -24,8 +23,20 @@ initialize_treatment_data <- function() {
     file.copy(pkg_json_file_path, user_json_file_path)
   }
   
+  # Print the file path for debugging
+  print(paste("User JSON file path:", user_json_file_path))
+  
+  # Check if the file exists and is readable
+  if (!file.exists(user_json_file_path)) {
+    stop("JSON file does not exist.")
+  }
+  
   # Load the data from the user-specific file
-  treatment_data <<- fromJSON(user_json_file_path)$Treatment
+  tryCatch({
+    treatment_data <<- fromJSON(user_json_file_path)$Treatment
+  }, error = function(e) {
+    stop("Failed to load JSON data: ", e$message)
+  })
   
   # Return the path for later use
   return(user_json_file_path)
@@ -33,6 +44,7 @@ initialize_treatment_data <- function() {
 
 # Initialize the data when the package is loaded or function is called
 json_file_path <- initialize_treatment_data()
+
 data <- fromJSON(json_file_path)
 
 
