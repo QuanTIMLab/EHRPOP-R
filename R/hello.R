@@ -18,25 +18,33 @@ initialize_treatment_data <- function() {
   # Define the package path
   pkg_json_file_path <- system.file("extdata", "all_codes.json", package = "EHRPOP")
   
+  # Check if the package JSON file exists
+  if (!file.exists(pkg_json_file_path)) {
+    stop("Package JSON file does not exist at path: ", pkg_json_file_path)
+  } else {
+    print("Package JSON file exists.")
+  }
+  
   # Define the user-specific path (writable)
   user_json_file_path <- file.path(tempdir(), "all_codes.json")
   
-  # Copy the file if it doesn't already exist
-  if (!file.exists(user_json_file_path)) {
-    file.copy(pkg_json_file_path, user_json_file_path)
+  # Attempt to copy the file
+  success <- file.copy(pkg_json_file_path, user_json_file_path)
+  if (!success) {
+    stop("Failed to copy JSON file to temp directory.")
+  } else {
+    print("File copied successfully to:", user_json_file_path)
   }
-  
-  # Print the file path for debugging
-  print(paste("User JSON file path:", user_json_file_path))
   
   # Check if the file exists and is readable
   if (!file.exists(user_json_file_path)) {
-    stop("JSON file does not exist.")
+    stop("JSON file does not exist after copy attempt.")
   }
   
   # Load the data from the user-specific file into the environment
   tryCatch({
     EHRPOP_env$treatment_data <- fromJSON(user_json_file_path)$Treatment
+    print("JSON loaded successfully.")
   }, error = function(e) {
     stop("Failed to load JSON data: ", e$message)
   })
@@ -44,6 +52,7 @@ initialize_treatment_data <- function() {
   # Return the path for later use
   return(user_json_file_path)
 }
+
 
 # Initialize the data when the package is loaded or function is called
 json_file_path <- initialize_treatment_data()
