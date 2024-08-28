@@ -11,54 +11,24 @@ library(stringr)
 library(jsonlite)
 
 
-# Create a package-specific environment
-EHRPOP_env <- new.env()
+# Define the path to the package's JSON file
+pkg_json_file_path <- system.file("extdata", "all_codes.json", package = "EHRPOP")
 
-initialize_treatment_data <- function() {
-  # Define the package path
-  pkg_json_file_path <- system.file("extdata", "all_codes.json", package = "EHRPOP")
+# Define the path to the new JSON file in your project directory
+project_json_file_path <- file.path(getwd(), "all_codes.json")  # or specify any other path
+
+# Check if the file already exists in the project directory
+if (!file.exists(project_json_file_path)) {
+  # If the file doesn't exist, read the data from the package's JSON file
+  data <- fromJSON(pkg_json_file_path)
   
-  # Check if the package JSON file exists
-  if (!file.exists(pkg_json_file_path)) {
-    stop("Package JSON file does not exist at path: ", pkg_json_file_path)
-  } else {
-    print("Package JSON file exists.")
-  }
+  # Write the data to the new JSON file in the project directory
+  write_json(data, path = project_json_file_path, pretty = TRUE, auto_unbox = TRUE)
   
-  # Define the user-specific path (writable)
-  user_json_file_path <- file.path(tempdir(), "all_codes.json")
-  
-  # Attempt to copy the file
-  success <- file.copy(pkg_json_file_path, user_json_file_path)
-  if (!success) {
-    stop("Failed to copy JSON file to temp directory.")
-  } else {
-    print("File copied successfully to:", user_json_file_path)
-  }
-  
-  # Check if the file exists and is readable
-  if (!file.exists(user_json_file_path)) {
-    stop("JSON file does not exist after copy attempt.")
-  }
-  
-  # Load the data from the user-specific file into the environment
-  tryCatch({
-    EHRPOP_env$treatment_data <- fromJSON(user_json_file_path)$Treatment
-    print("JSON loaded successfully.")
-  }, error = function(e) {
-    stop("Failed to load JSON data: ", e$message)
-  })
-  
-  # Return the path for later use
-  return(user_json_file_path)
+  print("File created successfully.")
+} else {
+  print("File already exists. No action taken.")
 }
-
-
-# Initialize the data when the package is loaded or function is called
-json_file_path <- initialize_treatment_data()
-
-
-data <- fromJSON(json_file_path)
 
 
 treatment_data <- data$Treatment
@@ -264,48 +234,52 @@ sankey
 
 }
 
+# Function to add a code to the Surgery section of the JSON data
 addCodeSurgery <- function(code, code_type) {
-  # Access the JSON data from the environment
-  data <- fromJSON(json_file_path, simplifyVector = FALSE)
+  # Read the JSON data from the file
+  data <- fromJSON(project_json_file_path, simplifyVector = FALSE)
+
+  print(data)
+  print(treatment_data)
+
   
   # Check if the code_type is valid
-  if (!code_type %in% names(EHRPOP_env$treatment_data$Surgery)) {
+  if (!code_type %in% names(data$Treatment$Surgery)) {
     message(sprintf("Error: Invalid code type '%s'", code_type))
     return(NULL)
   }
   
   # Add the code if it does not already exist
-  if (!(code %in% EHRPOP_env$treatment_data$Surgery[[code_type]])) {
-    EHRPOP_env$treatment_data$Surgery[[code_type]] <- c(EHRPOP_env$treatment_data$Surgery[[code_type]], code)
+  if (!(code %in% data$Treatment$Surgery[[code_type]])) {
+    data$Treatment$Surgery[[code_type]] <- c(data$Treatment$Surgery[[code_type]], code)
     message(sprintf("Code '%s' added to Surgery '%s'.", code, code_type))
     
     # Save the updated data back to the file
-    data$Treatment$Surgery <- EHRPOP_env$treatment_data$Surgery
-    write_json(data, path = json_file_path, pretty = TRUE, auto_unbox = TRUE)
+    write_json(data, path = project_json_file_path, pretty = TRUE, auto_unbox = TRUE)
+    treatment_data = data
   } else {
     message(sprintf("Code '%s' already exists in Surgery '%s'.", code, code_type))
   }
 }
 
-# Function to delete a code
+
 deleteCodeSurgery <- function(code) {
-  # Access the JSON data from the environment
-  data <- fromJSON(json_file_path, simplifyVector = FALSE)
+  # Read the JSON data from the file
+  data <- fromJSON(project_json_file_path, simplifyVector = FALSE)
   
   found <- FALSE
   
   # Iterate over each code type in the Surgery section
-  for (code_type in names(EHRPOP_env$treatment_data$Surgery)) {
+  for (code_type in names(data$Treatment$Surgery)) {
     # Check if the code is in the list for the current code type
-    if (code %in% EHRPOP_env$treatment_data$Surgery[[code_type]]) {
+    if (code %in% data$Treatment$Surgery[[code_type]]) {
       # Remove the code from the list
-      EHRPOP_env$treatment_data$Surgery[[code_type]] <- setdiff(EHRPOP_env$treatment_data$Surgery[[code_type]], code)
+      data$Treatment$Surgery[[code_type]] <- setdiff(data$Treatment$Surgery[[code_type]], code)
       found <- TRUE
       message(sprintf("Code '%s' removed from Surgery '%s'.", code, code_type))
       
       # Save the updated data back to the file
-      data$Treatment$Surgery <- EHRPOP_env$treatment_data$Surgery
-      write_json(data, path = json_file_path, pretty = TRUE, auto_unbox = TRUE)
+      write_json(data, path = project_json_file_path, pretty = TRUE, auto_unbox = TRUE)
     }
   }
   
@@ -313,3 +287,7 @@ deleteCodeSurgery <- function(code) {
     message(sprintf("Code '%s' not found in Surgery section.", code))
   }
 }
+
+
+
+
