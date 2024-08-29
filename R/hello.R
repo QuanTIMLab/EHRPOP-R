@@ -534,3 +534,89 @@ deleteCodeOther <- function(code) {
   }
 }
 
+
+yesOrNo <- function(df, CCAM_codes, ATC_codes, ICD_Codes, columnName,
+                    indexDate = "DATE", indexCodeCCAM = "CODE_CCAM", indexCodeATC = "CODE_ATC",
+                    indexCodeICD = "CODE_ICD10", indexID = "ID_PATIENT") {
+  
+  # Create a logical vector for matches within the specified timeframe and code lists
+  df <- df %>%
+    mutate(MATCH = ((df[[indexCodeCCAM]] %in% CCAM_codes |
+                     df[[indexCodeATC]] %in% ATC_codes |
+                     df[[indexCodeICD]] %in% ICD_Codes) 
+                    ))
+  
+  # Group by patient ID and check if any matches exist for each patient
+  result <- df %>%
+    group_by_at(indexID) %>%
+    summarize(!!columnName := any(MATCH)) %>%
+    ungroup()
+  
+  return(result)
+}
+
+
+isTreatedByIt <- function(df, CCAM_codes, ATC_codes, ICD_Codes, columnName,
+                          indexCodeCCAM = "CODE_CCAM", indexCodeATC = "CODE_ATC",
+                          indexCodeICD = "CODE_ICD10", indexID = "ID_PATIENT") {
+  # Create a logical vector for matches within the specified code lists
+  df <- df %>%
+    mutate(MATCH = (df[[indexCodeCCAM]] %in% CCAM_codes |
+                    df[[indexCodeATC]] %in% ATC_codes |
+                    df[[indexCodeICD]] %in% ICD_Codes))
+  
+  # Group by patient ID and check if any matches exist for each patient
+  result <- df %>%
+    group_by_at(indexID) %>%
+    summarize(!!columnName := any(MATCH)) %>%
+    ungroup()
+  
+  return(result)
+}
+
+
+isTreatedByItWithQte <- function(df, CCAM_codes, ATC_codes, ICD_Codes, columnName) {
+  # Helper function to check if code starts with any prefix in codes_list
+  starts_with_any <- function(code, codes_list) {
+    code <- as.character(code)
+    any(sapply(codes_list, function(prefix) startsWith(code, prefix)))
+  }
+  
+  # Fill NA values
+  df <- df %>%
+    mutate(
+      DATE = ifelse(is.na(DATE), DATE_ENTREE, DATE),
+      QUANTITE = ifelse(is.na(QUANTITE), 1, QUANTITE),
+      SESSION = 1,
+      CODE_CCAM = as.character(CODE_CCAM),
+      CODE_ATC = as.character(CODE_ATC),
+      CODE_ICD10 = as.character(CODE_ICD10)
+    )
+  
+  # Check for relevant codes
+  df <- df %>%
+    mutate(
+      Is_Relevant = mapply(starts_with_any, CODE_CCAM, MoreArgs = list(codes_list = CCAM_codes)) |
+                    mapply(starts_with_any, CODE_ATC, MoreArgs = list(codes_list = ATC_codes)) |
+                    mapply(starts_with_any, CODE_ICD10, MoreArgs = list(codes_list = ICD_Codes))
+    )
+  
+  # Summarize the results
+  result <- df %>%
+    filter(Is_Relevant) %>%
+    group_by(ID_PATIENT) %>%
+    summarise(!!columnName := sum(SESSION, na.rm = TRUE)) %>%
+    ungroup()
+  
+  # Include patients with no relevant treatments
+  all_patients <- df %>%
+    select(ID_PATIENT) %>%
+    distinct()
+  
+  result <- all_patients %>%
+    left_join(result, by = "ID_PATIENT") %>%
+    mutate(!!columnName := ifelse(is.na(!!sym(columnName)), 0, !!sym(columnName)))
+  
+  return(result)
+}
+
