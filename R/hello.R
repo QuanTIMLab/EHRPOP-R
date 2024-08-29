@@ -239,7 +239,7 @@ addCodeSurgery <- function(code, code_type) {
     
     # Save the updated data back to the file
     write_json(data, path = pkg_json_file_path, pretty = TRUE, auto_unbox = TRUE)
-    treatment_data <<- data$Treatment
+    assign("treatment_data", data$Treatment, envir = .GlobalEnv)
   } else {
     message(sprintf("Code '%s' already exists in Surgery '%s'.", code, code_type))
   }
@@ -261,7 +261,7 @@ deleteCodeSurgery <- function(code) {
       found <- TRUE
       message(sprintf("Code '%s' removed from Surgery '%s'.", code, code_type))
       
-      treatment_data <<- data$Treatment
+      assign("treatment_data", data$Treatment, envir = .GlobalEnv)
       # Save the updated data back to the file
       write_json(data, path = pkg_json_file_path, pretty = TRUE, auto_unbox = TRUE)
     }
