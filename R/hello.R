@@ -11,7 +11,6 @@ library(jsonlite)
 
 # Define the path to the package's JSON file
 pkg_json_file_path <- system.file("extdata", "all_codes.json", package = "EHRPOP")
-
 treatment_data <- fromJSON(pkg_json_file_path)$Treatment
 
 
@@ -240,7 +239,7 @@ addCodeSurgery <- function(code, code_type) {
     
     # Save the updated data back to the file
     write_json(data, path = pkg_json_file_path, pretty = TRUE, auto_unbox = TRUE)
-    treatment_data = data
+    treatment_data <<- data$Treatment
   } else {
     message(sprintf("Code '%s' already exists in Surgery '%s'.", code, code_type))
   }
@@ -262,6 +261,7 @@ deleteCodeSurgery <- function(code) {
       found <- TRUE
       message(sprintf("Code '%s' removed from Surgery '%s'.", code, code_type))
       
+      treatment_data <<- data$Treatment
       # Save the updated data back to the file
       write_json(data, path = pkg_json_file_path, pretty = TRUE, auto_unbox = TRUE)
     }
