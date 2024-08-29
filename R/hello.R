@@ -1032,3 +1032,311 @@ classify_regimen_chemo <- function(text) {
 }
 
 
+isDementia <- function(df, columnName) {
+    # Define the dementia criteria
+    determine_dementia <- function(row) {
+        if (row['IS_Dementia']) {
+            return(TRUE)
+        } else if (is.na(row['Qte_Dementia']) || row['Qte_Dementia'] <= 2) {
+            return(FALSE)
+        } else {
+            return(TRUE)
+        }
+    }
+    
+    # Apply the treatments and conditions
+    DementiaATC <- isTreatedByItWithQte(df, CCAM_codes = NULL, ATC_codes = data$Disease$Dementia$ATC,ICD_Codes=NULL,columnName="Qte Dementia")
+    DementiaICD10 <- isTreatedByIt(df, CCAM_codes = NULL, ICD_Codes = data$Disease$Dementia$ICD10,ATC_codes=NULL,columnName="IS_Dementia")
+    
+    # Merge results
+    Dementia <- merge(DementiaATC, DementiaICD10, by = 'ID_PATIENT')
+    
+    # Apply the dementia determination function
+    Dementia[[columnName]] <- apply(Dementia, 1, determine_dementia)
+    
+    # Drop unnecessary columns
+    Dementia <- Dementia[, !names(Dementia) %in% c('Qte_Dementia', 'IS_Dementia')]
+    
+    return(Dementia)
+}
+
+
+isCOPD <- function(df, columnName) {
+    
+COPD <- isTreatedByIt(df, CCAM_codes = NULL, ICD_Codes = data$Disease$Dementia$ICD10,ATC_codes=data$Disease$Dementia$ATC,columnName=columnName)
+
+return (COPD)
+
+}
+
+isHypertension <- function(df, columnName) {
+    # Identifies patients with hypertension based on antihypertensive drug dispensation criteria.
+    # Criteria:
+    # - Antihypertensive drugs dispensed at least 3 times during the previous 12 months.
+
+    # Determine hypertension based on the quantity of hypertension treatments
+    determine_hypertension <- function(row) {
+        if (is.na(row$Qte_Hypertension)) {
+            return(FALSE)
+        } else if (row$Qte_Hypertension > 2) {
+            return(TRUE)
+        } else {
+            return(FALSE)
+        }
+    }
+
+    # Assuming isTreatedByItWithQte is defined somewhere else
+    Hypertension <- isTreatedByItWithQte(df, CCAM_codes = NULL, ATC_codes = data$Disease$Hypertension, ICD_Codes = NULL, columnName = 'Qte Hypertension')
+
+    # Apply the determine_hypertension function to each row
+    Hypertension[[columnName]] <- apply(Hypertension, 1, determine_hypertension)
+
+    # Drop the Qte Hypertension column
+    Hypertension <- Hypertension[, !names(Hypertension) %in% c('Qte_Hypertension')]
+
+    return(Hypertension)
+}
+
+isDiabetes <- function(df, columnName) {
+    
+Diabetes <- isTreatedByIt(df, CCAM_codes = NULL, ICD_Codes = data$Disease$Diabetes$ICD10,ATC_codes=data$Disease$Diabetes$ATC,columnName=columnName)
+
+return (Diabetes)
+
+}
+
+isCerebrovascular <- function(df, columnName) {
+    
+Cerebrovascular <- isTreatedByIt(df, CCAM_codes = NULL, 
+                                 ICD_Codes = data$Disease$`Cerebrovascular Disease`$ICD10,ATC_codes=NULL,columnName=columnName)
+
+return (Cerebrovascular)
+
+}
+
+isHeart_failure <- function(df, columnName) {
+    
+Heart_failure <- isTreatedByIt(df, CCAM_codes = NULL, 
+                                 ICD_Codes = data$Disease$`Heart Failure`$ICD10,ATC_codes=NULL,columnName=columnName)
+
+return (Heart_failure)
+
+}
+
+
+isMyocardial_infarction <- function(df, columnName) {
+    
+Myocardial_infarction <- isTreatedByIt(df, CCAM_codes = NULL, 
+                                 ICD_Codes = data$Disease$`Myocardial_infarction`$ICD10,ATC_codes=NULL,columnName=columnName)
+
+return (Myocardial_infarction)
+
+}
+
+isChronic_ischaemic <- function(df, columnName) {
+    # Function to identify patients with chronic ischemic heart disease
+  
+    # Define ICD-10 codes to exclude
+    without_chronic <- c('I21', 'I24')
+    
+    # Define ICD-10 codes for chronic ischemic heart disease
+    chronic_ischaemic_codes <- data$Disease$`Chronic Ischaemic Heart Disease`$ICD10
+    
+    # Check for chronic ischemic heart disease in the data
+    chronic_ischaemic <- df %>%
+        dplyr::filter(CODE_ICD10 %in% chronic_ischaemic_codes) %>%
+        dplyr::group_by(ID_PATIENT) %>%
+        dplyr::summarize(Chronic_Ischaemic = TRUE)
+    
+    # Check for codes that exclude chronic ischemic heart disease
+    without_chronic_df <- df %>%
+        dplyr::filter(CODE_ICD10 %in% without_chronic) %>%
+        dplyr::group_by(ID_PATIENT) %>%
+        dplyr::summarize(Without_chronic = TRUE)
+    
+    # Merge both datasets
+    merged_df <- dplyr::left_join(chronic_ischaemic, without_chronic_df, by = "ID_PATIENT")
+    
+    # Determine chronic ischemic heart disease, excluding specific codes
+    merged_df[[columnName]] <- ifelse(is.na(merged_df$Without_chronic) & !is.na(merged_df$Chronic_Ischaemic), TRUE, FALSE)
+    
+    # Drop temporary columns
+    merged_df <- merged_df %>%
+        dplyr::select(ID_PATIENT, !!columnName)
+    
+    return(merged_df)
+}
+
+
+isStroke <- function(df, columnName) {
+    
+    
+Acute_stroke <- isTreatedByIt(df, CCAM_codes = NULL, 
+                                     ICD_Codes = data$Disease$`Acute Stroke`$ICD10,ATC_codes=NULL,columnName=columnName)
+
+return (Acute_stroke)
+
+}
+
+isRenal_disease <- function(df, columnName) {
+    
+Renal_disease <- isTreatedByIt(df, CCAM_codes = data$Disease$`Renal Disease`$CCAM, 
+                                 ICD_Codes = data$Disease$`Renal Disease`$ICD10,ATC_codes=NULL,columnName=columnName)
+
+return (Renal_disease)
+
+}
+
+
+
+
+isLiver_and_Pancreas <- function(df, columnName) {
+    
+Liver_and_Pancreas <- isTreatedByIt(df, CCAM_codes = NULL, 
+                                 ICD_Codes = data$Disease$`Liver and Pancreas`$ICD10,ATC_codes=NULL,columnName=columnName)
+
+return (Liver_and_Pancreas)
+
+}
+
+
+isUndernutrition <- function(df, columnName) {
+    
+Undernutrition <- isTreatedByIt(df, CCAM_codes = NULL, 
+                                 ICD_Codes = data$Disease$`Undernutrition`$ICD10,ATC_codes=NULL,columnName=columnName)
+
+return (Undernutrition)
+
+}
+
+
+isParkinson <- function(df, columnName) {
+    
+Parkinson <- isTreatedByIt(df, CCAM_codes = NULL, 
+                                 ICD_Codes = data$Disease$`Parkinson`$ICD10,ATC_codes=NULL,columnName=columnName)
+
+return (Parkinson)
+
+}
+
+isEpilepsy <- function(df, columnName) {
+    
+Epilepsy <- isTreatedByIt(df, CCAM_codes = NULL, 
+                                 ICD_Codes = data$Disease$`Epilepsy`$ICD10,ATC_codes=NULL,columnName=columnName)
+
+return (Epilepsy)
+
+}
+isPsychiatric_Disease <- function(df, columnName) {
+    
+    
+Psychiatric_Disease_ICD10 <- c(
+  data$Disease$`Psychiatric Disease`$`Schizophrenia and Delusional Diseases`,
+  data$Disease$`Psychiatric Disease`$`Depression and Mood Diseases`,
+  data$Disease$`Psychiatric Disease`$`Mental Deficiency`,
+  data$Disease$`Psychiatric Disease`$`Substance Abuse Disorders`,
+  data$Disease$`Psychiatric Disease`$`Disorders of Psychological Development`
+)
+    
+Psychiatric_Disease <- isTreatedByIt(df, CCAM_codes = NULL, 
+                                 ICD_Codes = Psychiatric_Disease_ICD10,ATC_codes=NULL,columnName=columnName)
+
+return (Psychiatric_Disease)
+
+}
+
+isPeripheral_vascular <- function(df, columnName) {
+    
+    
+    
+Peripheral_vascular <- isTreatedByIt(df, CCAM_codes = NULL, 
+                                 ICD_Codes = data$Disease$`Peripheral Vascular Disease`$ICD10,ATC_codes=NULL,columnName=columnName)
+
+return (Peripheral_vascular)
+
+}
+
+isDyslipidemia <- function(df, columnName) {
+  #' Identifies patients with dyslipidemia based on specific treatment criteria and absence of associated pathologies.
+  #'
+  #' Criteria:
+  #' - Delivery on at least 3 occasions in the year:
+  #'   - Statins: C10AA, C10BA, C10BX
+  #'   - Fibrates: C10AB
+  #'   - Other lipid-lowering agents: C10AC, C10AD, C10AX
+  #'
+  #' Without associated pathology:
+  #' - No code for coronary heart disease (I20, I21, I22, I23, I24, I25)
+  #' - No code for stroke (I60, I61, I62, I63, I64)
+  #' - No code for heart failure (I50, I11.0, I13.0, I13.2, I13.9, K76.1, J81)
+  #' - No code for atherosclerosis of arteries of extremities (I70.2)
+  #' - No code for chronic endstage kidney failure (N184, N185)
+  #' - No code for diabetes mellitus ("E10", "E11", "E12", "E13", "E14", "A10A", "A10B") or complications
+  #'
+  #' @param df The input data frame containing patient treatment records.
+  #' @param columnName The name for the output column in the resulting data frame, indicating whether each patient has dyslipidemia.
+  #'
+  #' @return A data frame with patient IDs and a boolean indicator of whether they have dyslipidemia.
+  
+  determine_dyslipidemia <- function(row) {
+    # Handle NA values by treating them as FALSE in logical operations
+    chronic_ischaemic <- ifelse(is.na(row["Chronic_ischaemic"]), FALSE, row["Chronic_ischaemic"])
+    acute_stroke <- ifelse(is.na(row["Acute_stroke"]), FALSE, row["Acute_stroke"])
+    heart_failure <- ifelse(is.na(row["Heart_failure"]), FALSE, row["Heart_failure"])
+    aaoaoe <- ifelse(is.na(row["AOAOE"]), FALSE, row["AOAOE"])
+    ekf <- ifelse(is.na(row["EKF"]), FALSE, row["EKF"])
+
+    if (chronic_ischaemic | acute_stroke | heart_failure | aaoaoe | ekf) {
+      return(FALSE)
+    } else if (is.na(row["Qte_Dyslipidemia"]) | row["Qte_Dyslipidemia"] <= 2) {
+      return(FALSE)
+    } else {
+      return(TRUE)
+    }
+  }
+
+  # Define ATC codes for Dyslipidemia
+  Dyslipidemia_ATC <- c(data$Disease$Dyslipidemia$Statins, data$Disease$Dyslipidemia$Fibrates, data$Disease$Dyslipidemia$`Other Lipid Lowering Agents`)
+
+  # Identify patients treated for Dyslipidemia and count treatments
+  Dyslipidemia <- isTreatedByItWithQte(df, character(0), Dyslipidemia_ATC, character(0), 'Qte_Dyslipidemia')
+
+  # Identify patients with associated pathologies
+  atherosclerosis_of_arteries_of_extremities <- isTreatedByIt(df, character(0), c('I702'), character(0), 'AOAOE')
+  endstage_kidney_failure <- isTreatedByIt(df, character(0), c('N184', 'N185'), character(0), 'EKF')
+  Chronic_ischaemic <- isChronic_ischaemic(df, 'Chronic_ischaemic')
+  Acute_stroke <- isStroke(df, 'Acute_stroke')
+  Heart_failure <- isHeart_failure(df, 'Heart_failure')
+
+  # Merge all pathology data into the Dyslipidemia data frame
+  Dyslipidemia <- merge(Dyslipidemia, Chronic_ischaemic[, c('ID_PATIENT', 'Chronic_ischaemic')], by = 'ID_PATIENT', all.x = TRUE)
+  Dyslipidemia <- merge(Dyslipidemia, Acute_stroke[, c('ID_PATIENT', 'Acute_stroke')], by = 'ID_PATIENT', all.x = TRUE)
+  Dyslipidemia <- merge(Dyslipidemia, Heart_failure[, c('ID_PATIENT', 'Heart_failure')], by = 'ID_PATIENT', all.x = TRUE)
+  Dyslipidemia <- merge(Dyslipidemia, atherosclerosis_of_arteries_of_extremities[, c('ID_PATIENT', 'AOAOE')], by = 'ID_PATIENT', all.x = TRUE)
+  Dyslipidemia <- merge(Dyslipidemia, endstage_kidney_failure[, c('ID_PATIENT', 'EKF')], by = 'ID_PATIENT', all.x = TRUE)
+
+  # Apply the classification
+  Dyslipidemia[[columnName]] <- apply(Dyslipidemia, 1, determine_dyslipidemia)
+
+  return(Dyslipidemia[, c('ID_PATIENT', columnName)])
+}
+
+isTobacco <- function(df, columnName) {
+    
+    
+    
+Tobacco <- isTreatedByIt(df, CCAM_codes = NULL, 
+                                 ICD_Codes = data$Disease$`Tobacco`$ICD10,ATC_codes=data$Disease$`Tobacco`$ATC,columnName=columnName)
+
+return (Tobacco)
+
+}
+
+isAlcohol <- function(df, columnName) {
+   
+Alcohol <- isTreatedByIt(df, CCAM_codes = NULL, 
+                                 ICD_Codes = data$Disease$`Alcohol`$ICD10,ATC_codes=data$Disease$`Alcohol`$ATC,columnName=columnName)
+
+return (Alcohol)
+
+}
