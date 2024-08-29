@@ -12,6 +12,7 @@ library(jsonlite)
 # Define the path to the package's JSON file
 pkg_json_file_path <- system.file("extdata", "all_codes.json", package = "EHRPOP")
 treatment_data <- fromJSON(pkg_json_file_path)$Treatment
+data <- fromJSON(pkg_json_file_path)
 
 
 #' @importFrom jsonlite fromJSON
