@@ -273,5 +273,264 @@ deleteCodeSurgery <- function(code) {
 }
 
 
+# Function to add a code to the RT section of the JSON data
+addCodeRT <- function(code, code_type) {
+  # Read the JSON data from the file
+  data <- fromJSON(json_file_path, simplifyVector = FALSE)
+  
+  # Check if the code_type is valid
+  if (!code_type %in% names(data$Treatment$RT)) {
+    message(sprintf("Error: Invalid code type '%s'", code_type))
+    return(NULL)
+  }
+  
+  # Add the code if it does not already exist
+  if (!(code %in% data$Treatment$RT[[code_type]])) {
+    data$Treatment$RT[[code_type]] <- c(data$Treatment$RT[[code_type]], code)
+    message(sprintf("Code '%s' added to RT '%s'.", code, code_type))
+          assign("treatment_data", data$Treatment, envir = .GlobalEnv)
 
+    # Save the updated data back to the file
+    write_json(data, path = json_file_path, pretty = TRUE, auto_unbox = TRUE)
+  } else {
+    message(sprintf("Code '%s' already exists in RT '%s'.", code, code_type))
+  }
+}
+
+
+deleteCodeRT <- function(code) {
+  # Read the JSON data from the file
+  data <- fromJSON(json_file_path, simplifyVector = FALSE)
+  
+  found <- FALSE
+  
+  # Iterate over each code type in the RT section
+  for (code_type in names(data$Treatment$RT)) {
+    # Check if the code is in the list for the current code type
+    if (code %in% data$Treatment$RT[[code_type]]) {
+      # Remove the code from the list
+      data$Treatment$RT[[code_type]] <- setdiff(data$Treatment$RT[[code_type]], code)
+      found <- TRUE
+      message(sprintf("Code '%s' removed from RT '%s'.", code, code_type))
+            assign("treatment_data", data$Treatment, envir = .GlobalEnv)
+
+      # Save the updated data back to the file
+      write_json(data, path = json_file_path, pretty = TRUE, auto_unbox = TRUE)
+    }
+  }
+  
+  if (!found) {
+    message(sprintf("Code '%s' not found in RT section.", code))
+  }
+}
+
+
+# Function to add a code to the CT section of the JSON data
+addCodeCT <- function(code, code_type) {
+  # Read the JSON data from the file
+  data <- fromJSON(json_file_path, simplifyVector = FALSE)
+  
+  # Check if the code_type is valid
+  if (!code_type %in% names(data$Treatment$CT)) {
+    message(sprintf("Error: Invalid code type '%s'", code_type))
+    return(NULL)
+  }
+  
+  # Add the code if it does not already exist
+  if (!(code %in% data$Treatment$CT[[code_type]])) {
+    data$Treatment$CT[[code_type]] <- c(data$Treatment$CT[[code_type]], code)
+    message(sprintf("Code '%s' added to CT '%s'.", code, code_type))
+                assign("treatment_data", data$Treatment, envir = .GlobalEnv)
+
+    # Save the updated data back to the file
+    write_json(data, path = json_file_path, pretty = TRUE, auto_unbox = TRUE)
+  } else {
+    message(sprintf("Code '%s' already exists in CT '%s'.", code, code_type))
+  }
+}
+
+
+deleteCodeCT <- function(code) {
+  # Read the JSON data from the file
+  data <- fromJSON(json_file_path, simplifyVector = FALSE)
+  
+  found <- FALSE
+  
+  # Iterate over each code type in the CT section
+  for (code_type in names(data$Treatment$CT)) {
+    # Check if the code is in the list for the current code type
+    if (code %in% data$Treatment$CT[[code_type]]) {
+      # Remove the code from the list
+      data$Treatment$CT[[code_type]] <- setdiff(data$Treatment$CT[[code_type]], code)
+      found <- TRUE
+      message(sprintf("Code '%s' removed from CT '%s'.", code, code_type))
+                  assign("treatment_data", data$Treatment, envir = .GlobalEnv)
+
+      # Save the updated data back to the file
+      write_json(data, path = json_file_path, pretty = TRUE, auto_unbox = TRUE)
+    }
+  }
+  
+  if (!found) {
+    message(sprintf("Code '%s' not found in CT section.", code))
+  }
+}
+
+
+
+# Function to add a code to the ET section of the JSON data
+addCodeET <- function(code, code_type) {
+  # Read the JSON data from the file
+  data <- fromJSON(json_file_path, simplifyVector = FALSE)
+  
+  # Check if the code_type is valid
+  if (!code_type %in% names(data$Treatment$ET)) {
+    message(sprintf("Error: Invalid code type '%s'", code_type))
+    return(NULL)
+  }
+  
+  # Add the code if it does not already exist
+  if (!(code %in% data$Treatment$ET[[code_type]])) {
+    data$Treatment$ET[[code_type]] <- c(data$Treatment$ET[[code_type]], code)
+    message(sprintf("Code '%s' added to ET '%s'.", code, code_type))
+                      assign("treatment_data", data$Treatment, envir = .GlobalEnv)
+
+    # Save the updated data back to the file
+    write_json(data, path = json_file_path, pretty = TRUE, auto_unbox = TRUE)
+  } else {
+    message(sprintf("Code '%s' already exists in ET '%s'.", code, code_type))
+  }
+}
+
+
+deleteCodeET <- function(code) {
+  # Read the JSON data from the file
+  data <- fromJSON(json_file_path, simplifyVector = FALSE)
+  
+  found <- FALSE
+  
+  # Iterate over each code type in the ET section
+  for (code_type in names(data$Treatment$ET)) {
+    # Check if the code is in the list for the current code type
+    if (code %in% data$Treatment$ET[[code_type]]) {
+      # Remove the code from the list
+      data$Treatment$ET[[code_type]] <- setdiff(data$Treatment$ET[[code_type]], code)
+      found <- TRUE
+      message(sprintf("Code '%s' removed from ET '%s'.", code, code_type))
+      
+      assign("treatment_data", data$Treatment, envir = .GlobalEnv)
+
+      # Save the updated data back to the file
+      write_json(data, path = json_file_path, pretty = TRUE, auto_unbox = TRUE)
+    }
+  }
+  
+  if (!found) {
+    message(sprintf("Code '%s' not found in ET section.", code))
+  }
+}
+
+
+# Function to add a code to the TT section of the JSON data
+addCodeTT <- function(code, code_type) {
+  # Read the JSON data from the file
+  data <- fromJSON(json_file_path, simplifyVector = FALSE)
+  
+  # Check if the code_type is valid
+  if (!code_type %in% names(data$Treatment$TT)) {
+    message(sprintf("Error: Invalid code type '%s'", code_type))
+    return(NULL)
+  }
+  
+  # Add the code if it does not already exist
+  if (!(code %in% data$Treatment$TT[[code_type]])) {
+    data$Treatment$TT[[code_type]] <- c(data$Treatment$TT[[code_type]], code)
+    message(sprintf("Code '%s' added to TT '%s'.", code, code_type))
+          assign("treatment_data", data$Treatment, envir = .GlobalEnv)
+
+    # Save the updated data back to the file
+    write_json(data, path = json_file_path, pretty = TRUE, auto_unbox = TRUE)
+  } else {
+    message(sprintf("Code '%s' already exists in TT '%s'.", code, code_type))
+  }
+}
+
+
+deleteCodeTT <- function(code) {
+  # Read the JSON data from the file
+  data <- fromJSON(json_file_path, simplifyVector = FALSE)
+  
+  found <- FALSE
+  
+  # Iterate over each code type in the TT section
+  for (code_type in names(data$Treatment$TT)) {
+    # Check if the code is in the list for the current code type
+    if (code %in% data$Treatment$TT[[code_type]]) {
+      # Remove the code from the list
+      data$Treatment$TT[[code_type]] <- setdiff(data$Treatment$TT[[code_type]], code)
+      found <- TRUE
+      message(sprintf("Code '%s' removed from TT '%s'.", code, code_type))
+            assign("treatment_data", data$Treatment, envir = .GlobalEnv)
+
+      # Save the updated data back to the file
+      write_json(data, path = json_file_path, pretty = TRUE, auto_unbox = TRUE)
+    }
+  }
+  
+  if (!found) {
+    message(sprintf("Code '%s' not found in TT section.", code))
+  }
+}
+
+
+# Function to add a code to the Other section of the JSON data
+addCodeOther <- function(code, code_type) {
+  # Read the JSON data from the file
+  data <- fromJSON(json_file_path, simplifyVector = FALSE)
+  
+  # Check if the code_type is valid
+  if (!code_type %in% names(data$Treatment$Other)) {
+    message(sprintf("Error: Invalid code type '%s'", code_type))
+    return(NULL)
+  }
+  
+  # Add the code if it does not already exist
+  if (!(code %in% data$Treatment$Other[[code_type]])) {
+    data$Treatment$Other[[code_type]] <- c(data$Treatment$Other[[code_type]], code)
+    message(sprintf("Code '%s' added to Other '%s'.", code, code_type))
+                assign("treatment_data", data$Treatment, envir = .GlobalEnv)
+
+    # Save the updated data back to the file
+    write_json(data, path = json_file_path, pretty = TRUE, auto_unbox = TRUE)
+  } else {
+    message(sprintf("Code '%s' already exists in Other '%s'.", code, code_type))
+  }
+}
+
+
+deleteCodeOther <- function(code) {
+  # Read the JSON data from the file
+  data <- fromJSON(json_file_path, simplifyVector = FALSE)
+  
+  found <- FALSE
+  
+  # Iterate over each code type in the Other section
+  for (code_type in names(data$Treatment$Other)) {
+    # Check if the code is in the list for the current code type
+    if (code %in% data$Treatment$Other[[code_type]]) {
+      # Remove the code from the list
+      data$Treatment$Other[[code_type]] <- setdiff(data$Treatment$Other[[code_type]], code)
+      found <- TRUE
+      message(sprintf("Code '%s' removed from Other '%s'.", code, code_type))
+                  assign("treatment_data", data$Treatment, envir = .GlobalEnv)
+
+      # Save the updated data back to the file
+      write_json(data, path = json_file_path, pretty = TRUE, auto_unbox = TRUE)
+    }
+  }
+  
+  if (!found) {
+    message(sprintf("Code '%s' not found in Other section.", code))
+  }
+}
 
