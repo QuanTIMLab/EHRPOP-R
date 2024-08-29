@@ -620,3 +620,415 @@ isTreatedByItWithQte <- function(df, CCAM_codes, ATC_codes, ICD_Codes, columnNam
   return(result)
 }
 
+
+# Define tableValues function in R
+tableValues <- function(df, listColumns, dateStart = NULL, dateEnd = NULL) {
+  if (length(listColumns) == 0) {
+    stop("listColumns cannot be empty.")
+  }
+
+  missing_columns <- setdiff(listColumns, colnames(df))
+  if (length(missing_columns) > 0) {
+    stop(paste("The following columns are missing in the DataFrame:", paste(missing_columns, collapse = ", ")))
+  }
+
+  if (!is.null(dateStart)) {
+    base_date <- as.Date("1960-01-01")
+    dateStart <- as.integer(as.Date(dateStart) - base_date)
+  }
+
+  if (!is.null(dateEnd)) {
+    base_date <- as.Date("1960-01-01")
+    dateEnd <- as.integer(as.Date(dateEnd) - base_date)
+  }
+
+  results <- NULL
+
+  for (coln in listColumns) {
+    unique_values <- unique(na.omit(df[[coln]]))
+    count <- 0
+    for (value in unique_values) {
+      if (startsWith(coln, "CODE_")) {
+        r <- isTreatedByItWithQte(df[df[[coln]] == value, ], list(value), list(value), list(value), paste0(coln, "_", value))
+      } else {
+        r <- isTreatedByItWithQte(df[df[[coln]] == value, ], list(), list(), list(), paste0(coln, "_", value))
+      }
+      
+      if (count == 0) {
+        results <- r
+      } else {
+        results <- merge(results, r, by = "ID_PATIENT", all = TRUE)
+      }
+      count <- count + 1
+    }
+  }
+
+  return(results)
+}
+
+# Define the function to combine codes from specified columns
+combine_codes <- function(row, listColumns) {
+  codes <- ""
+  for (col in listColumns) {
+    if (!is.na(row[[col]])) {
+      codes <- row[[col]]
+    }
+  }
+  return(codes)
+}
+
+# Define the tableSequances function
+tableSequances <- function(df, listColumns) {
+  if (length(listColumns) == 0) {
+    stop("listColumns cannot be empty.")
+  }
+
+  missing_columns <- setdiff(listColumns, colnames(df))
+  if (length(missing_columns) > 0) {
+    stop(paste("The following columns are missing in the DataFrame:", paste(missing_columns, collapse = ", ")))
+  }
+
+  # Apply the function to create CODE_ACTS
+  df <- df %>%
+    rowwise() %>%
+    mutate(CODE_ACTS = combine_codes(cur_data(), listColumns)) %>%
+    ungroup()
+
+  df <- df %>%
+    filter(CODE_ACTS != "") %>%
+    select(ID_PATIENT, DATE, CODE_ACTS)
+
+  df <- df %>%
+    arrange(ID_PATIENT, DATE)
+
+  grouped <- df %>%
+    group_by(ID_PATIENT) %>%
+    summarise(DATES = list(DATE), CODE_ACTS = list(CODE_ACTS)) %>%
+    ungroup()
+
+  # Sort acts by date within each group
+  grouped <- grouped %>%
+    rowwise() %>%
+    mutate(ACTES = list(CODE_ACTS[order(DATES)])) %>%
+    ungroup()
+
+  # Create the final DataFrame with ID_PATIENT, DATES, and ACTES columns
+  final_df <- grouped %>%
+    select(ID_PATIENT, DATES, ACTES)
+
+  return(final_df)
+}
+
+# Define the tableSequancesTwo function
+tableSequancesTwo <- function(df, listColumns) {
+  if (length(listColumns) == 0) {
+    stop("listColumns cannot be empty.")
+  }
+
+  missing_columns <- setdiff(listColumns, colnames(df))
+  if (length(missing_columns) > 0) {
+    stop(paste("The following columns are missing in the DataFrame:", paste(missing_columns, collapse = ", ")))
+  }
+
+  # Apply the function to create CODE_ACTS
+  df <- df %>%
+    rowwise() %>%
+    mutate(CODE_ACTS = combine_codes(cur_data(), listColumns)) %>%
+    ungroup()
+
+  df <- df %>%
+    filter(CODE_ACTS != "") %>%
+    select(ID_PATIENT, DATE, CODE_ACTS)
+
+  # Sort the DataFrame by ID_PATIENT and DATE
+  df <- df %>%
+    arrange(ID_PATIENT, DATE)
+
+  # Function to create the sequence for each patient
+  create_sequence <- function(group) {
+    sequence <- c()
+    prev_date <- NA
+    for (i in 1:nrow(group)) {
+      current_date <- group$DATE[i]
+      current_code <- group$CODE_ACTS[i]
+      if (is.na(prev_date)) {
+        sequence <- c(sequence, paste0("[0,", current_code, "]"))
+      } else {
+        interval <- current_date - prev_date
+        sequence <- c(sequence, paste0("[", interval, ",", current_code, "]"))
+      }
+      prev_date <- current_date
+    }
+    return(sequence)
+  }
+
+  # Group by ID_PATIENT and apply the function
+  result <- df %>%
+    group_by(ID_PATIENT) %>%
+    summarise(Sequence = list(create_sequence(cur_data()))) %>%
+    ungroup()
+
+  return(result)
+}
+
+library(jsonlite)
+
+readJSON <- function(input_filepath, json_path) {
+  # Utility function to load JSON data from a given file path
+  load_json_data <- function(filepath) {
+    data <- fromJSON(filepath)
+    return(data)
+  }
+  
+  # Load the input JSON data
+  input_data <- load_json_data(input_filepath)
+  
+  # Check if the JSON structure starts with "Treatment"
+  if (!"Treatment" %in% names(input_data)) {
+    stop("The JSON structure must start with 'Treatment'.")
+  }
+  
+  # Load the existing data from the JSON file where the output will be stored
+  if (file.exists(json_path)) {
+    data <- load_json_data(json_path)
+  } else {
+    data <- list()
+  }
+  
+  # Ensure the "Treatment" key exists in the existing data
+  if (!"Treatment" %in% names(data)) {
+    data$Treatment <- list()
+  }
+  
+  # Concatenate the input data with the existing output data
+  for (treatment_type in names(input_data$Treatment)) {
+    if (!treatment_type %in% names(data$Treatment)) {
+      data$Treatment[[treatment_type]] <- input_data$Treatment[[treatment_type]]
+    } else {
+      for (category in names(input_data$Treatment[[treatment_type]])) {
+        if (!category %in% names(data$Treatment[[treatment_type]])) {
+          data$Treatment[[treatment_type]][[category]] <- input_data$Treatment[[treatment_type]][[category]]
+        } else {
+          # Combine the existing and new codes, removing duplicates
+          combined_codes <- unique(c(
+            data$Treatment[[treatment_type]][[category]],
+            input_data$Treatment[[treatment_type]][[category]]
+          ))
+          data$Treatment[[treatment_type]][[category]] <- combined_codes
+        }
+      }
+    }
+  }
+
+  assign("treatment_data", data$Treatment, envir = .GlobalEnv)
+  # Save the updated data back to the output JSON file
+  write_json(data, json_path, pretty = TRUE)
+}
+
+
+library(dplyr)
+
+neoadjuvantOrAdjuvantOrBoth <- function(df, CCAM_codes, ATC_codes, ICD_Codes, columnName, daysBefore, daysAfter,
+                                        indexDate = "DATE", indexCodeCCAM = "CODE_CCAM", 
+                                        indexCodeATC = "CODE_ATC", indexCodeICD = "CODE_ICD10",
+                                        indexID = "ID_PATIENT", BC_index_surgery = "BC_index_surgery") {
+    
+    
+    # Calculate DATE_DIFF as the difference between DATE and BC_index_surgery
+    df$DATE_DIFF <- df_merged$DATE - df$BC_index_surgery
+    df <- df[df$DATE_DIFF >= -daysBefore & df$DATE_DIFF <= daysAfter, ]
+    
+    df$Is_Relevant <- df[[indexCodeCCAM]] %in% CCAM_codes | 
+                  df[[indexCodeATC]] %in% ATC_codes | 
+                  df[[indexCodeICD]] %in% ICD_Codes
+    
+    
+    # Initialize an empty list to store the patient classifications
+    patient_classification <- list()
+
+    # Get unique patient IDs
+    unique_patients <- unique(df[[indexID]])
+
+    # Loop through each patient ID
+    for (patient_id in unique_patients) {
+      # Filter the patient's relevant treatments
+      patient_df <- df[df[[indexID]] == patient_id & df$Is_Relevant, ]
+
+      # Skip patients with no relevant treatments
+      if (nrow(patient_df) == 0) {
+        patient_classification[[as.character(patient_id)]] <- 'False'
+        next
+      }
+
+      # Count positive and negative DATE_DIFF values
+      positive_count <- sum(patient_df[['DATE_DIFF']] > 0)
+      negative_count <- sum(patient_df[['DATE_DIFF']] < 0)
+
+      # Classify based on the counts
+      if (positive_count > 0 & negative_count > 0) {
+        patient_classification[[as.character(patient_id)]] <- 'Both'
+      } else if (positive_count > 0) {
+        patient_classification[[as.character(patient_id)]] <- 'Adjuvant'
+      } else if (negative_count > 0) {
+        patient_classification[[as.character(patient_id)]] <- 'Neoadjuvant'
+      } else {
+        patient_classification[[as.character(patient_id)]] <- 'False'
+      }
+    }
+
+    # Convert the list to a data frame
+    result <- setNames(
+      data.frame(
+        ID_PATIENT = names(patient_classification),
+        unlist(patient_classification),
+        stringsAsFactors = FALSE
+      ),
+      c("ID_PATIENT", columnName)
+    )
+
+
+
+    
+  return(result)
+}
+
+chemotherapyIntervals <- function(df, CCAM_codes, ATC_codes, ICD_Codes, columnName, daysBefore, daysAfter,
+                                        indexDate = "DATE", indexCodeCCAM = "CODE_CCAM", 
+                                        indexCodeATC = "CODE_ATC", indexCodeICD = "CODE_ICD10",
+                                        indexID = "ID_PATIENT", BC_index_surgery = "BC_index_surgery") {
+    
+    
+    # Calculate DATE_DIFF as the difference between DATE and BC_index_surgery
+    df$DATE_DIFF <- df_merged$DATE - df$BC_index_surgery
+    df <- df[df$DATE_DIFF >= -daysBefore & df$DATE_DIFF <= daysAfter, ]
+    
+    df$Is_Relevant <- df[[indexCodeCCAM]] %in% CCAM_codes | 
+                  df[[indexCodeATC]] %in% ATC_codes | 
+                  df[[indexCodeICD]] %in% ICD_Codes
+    
+    
+    # Initialize an empty list to store the patient classifications
+    patient_classification <- list()
+
+    # Get unique patient IDs
+    unique_patients <- unique(df[[indexID]])
+    
+    # Initialize an empty list to store the patient classifications
+    patient_classification <- list()
+
+    # Get unique patient IDs
+    unique_patients <- unique(df[[indexID]])
+
+    # Loop through each patient ID
+    for (patient_id in unique_patients) {
+      # Filter the patient's relevant treatments
+      patient_df <- df[df[[indexID]] == patient_id & df$Is_Relevant, ]
+
+      # Skip patients with no relevant treatments
+      if (nrow(patient_df) == 0) {
+        patient_classification[[as.character(patient_id)]] <- 'False'
+        next
+      }
+
+      Text <- ""
+      temp <- 0
+      c <- 0
+
+      # Loop through each row in the filtered data
+      for (i in 1:nrow(patient_df)) {
+        data <- patient_df[i, ]
+
+        if (c == 0) {
+          Text <- "0"
+          temp <- data[[indexDate]]
+        } else {
+          Text <- paste0(Text, " -> ", as.character(data[[indexDate]] - temp))
+          temp <- data[[indexDate]]
+        }
+
+        c <- c + 1
+      }
+
+      patient_classification[[as.character(patient_id)]] <- Text
+    }
+
+    # Convert the list to a data frame with a dynamic column name
+    result <- setNames(
+      data.frame(
+        ID_PATIENT = names(patient_classification),
+        unlist(patient_classification),
+        stringsAsFactors = FALSE
+      ),
+      c("ID_PATIENT", columnName)
+    )
+
+    # return the result
+    return(result)
+
+    
+    }
+
+
+classify_regimen_chemo <- function(text) {
+  # Load necessary libraries
+  library(stringr)
+  
+  # Never done a chemotherapy
+  if (text == "False") {
+    return("False")
+  }
+  
+  # Extract numeric values from the text
+  numbers <- as.numeric(str_extract_all(text, "\\b\\d+\\.?\\d*\\b")[[1]])
+  numbers <- numbers[numbers != 0]
+  
+  # They have done only one chemotherapy session
+  if (length(numbers) == 0) {
+    return("ONE TREATMENT")
+  }
+  
+  # Normalize specific values to standard intervals
+  numbers[numbers %in% c(20, 22)] <- 21
+  numbers[numbers %in% c(6, 8)] <- 7
+  numbers[numbers %in% c(13, 15)] <- 14
+  
+  # Define helper functions to classify the regimens
+  is_paclitaxel <- function(seq) {
+    all(seq == 7)
+  }
+  
+  is_anthracyclines_docetaxel <- function(seq) {
+    len <- length(seq)
+    len >= 4 && all(seq[1:3] == 14) && all(seq[4:len] == 21)
+  }
+  
+  is_anthracyclines_paclitaxel <- function(seq) {
+    len <- length(seq)
+    len >= 4 && all(seq[1:3] == 14) && all(seq[4:len] == 7)
+  }
+  
+  is_anthracyclines_paclitaxel2 <- function(seq) {
+    transition_index <- which(seq == 7)[1]
+    if (is.na(transition_index)) {
+      return(FALSE)  # No 7-day interval found
+    }
+    before_transition <- all(seq[1:(transition_index - 1)] == 21)
+    after_transition <- all(seq[transition_index:length(seq)] == 7)
+    before_transition && after_transition
+  }
+  
+  is_anthracyclines <- function(seq) {
+    all(seq == 21)  # Unknown after March 2012
+  }
+  
+  # Apply classification rules
+  if (is_paclitaxel(numbers)) return('Paclitaxel')
+  if (is_anthracyclines_docetaxel(numbers)) return('Anthracyclines/docetaxel')
+  if (is_anthracyclines_paclitaxel(numbers)) return('Anthracyclines/paclitaxel')
+  if (is_anthracyclines_paclitaxel2(numbers)) return('Anthracyclines/paclitaxel')
+  if (is_anthracyclines(numbers)) return('Anthracyclines')
+  
+  return('Other')
+}
+
+
