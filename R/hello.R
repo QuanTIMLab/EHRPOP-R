@@ -5,6 +5,7 @@
 #' @import stringr
 #' @import jsonlite
 
+
 library(R6)
 library(dplyr)
 library(tidyr)
@@ -222,13 +223,31 @@ TreatmentProcessor <- R6Class("TreatmentProcessor",
       return(result)
     },
       
-    is_treated_by_it = function(df, ccam_codes, atc_codes, icd_codes, column_name) {
-
-    df <- df %>%
-    mutate(MATCH = (df[[self$index_code_ccam]] %in% ccam_codes |
-                    df[[self$index_code_atc]] %in% atc_codes |
-                    df[[self$index_code_icd]] %in% icd_codes))
+    is_treated_by_it <- function(df, ccam_codes, atc_codes, icd_codes, column_name) {
   
+      # Handle cases where the code lists are empty
+      ccam_match <- if (length(ccam_codes) > 0 && ccam_codes != "") {
+        df[[self$index_code_ccam]] %in% ccam_codes
+      } else {
+        FALSE
+      }
+
+      atc_match <- if (length(atc_codes) > 0 && atc_codes != "") {
+        df[[self$index_code_atc]] %in% atc_codes
+      } else {
+        FALSE
+      }
+
+      icd_match <- if (length(icd_codes) > 0 && icd_codes != "") {
+        df[[self$index_code_icd]] %in% icd_codes
+      } else {
+        FALSE
+      }
+
+      # Combine matches
+      df <- df %>%
+        mutate(MATCH = ccam_match | atc_match | icd_match)
+
       result <- df %>%
         group_by_at(self$index_id) %>%
         summarize(!!column_name := any(MATCH)) %>%
